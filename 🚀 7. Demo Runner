@@ -1,0 +1,16 @@
+# demo_agent_run.py
+
+from orchestration.crowe_orchestrator import CroweOrchestrator
+
+system = CroweOrchestrator()
+
+queries = [
+    "Explain physics and math",
+    "Write python code",
+    "Tell me about history",
+    "Random unstable query with drift simulation"
+]
+
+for q in queries:
+    output = system.run(q)
+    print("FINAL OUTPUT:", output)
