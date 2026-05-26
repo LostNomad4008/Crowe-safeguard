@@ -1,0 +1,21 @@
+# agent_framework/router_agent.py
+
+class RouterAgent(BaseAgent):
+    def run(self, query, context=None):
+        q = query.lower()
+
+        activated = []
+
+        if any(k in q for k in ["physics", "math", "science"]):
+            activated.append("science")
+
+        if any(k in q for k in ["code", "python", "software"]):
+            activated.append("coding")
+
+        if "history" in q:
+            activated.append("history")
+
+        if not activated:
+            activated.append("general")
+
+        return activated
