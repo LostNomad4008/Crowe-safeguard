@@ -1,0 +1,16 @@
+# agent_framework/llm_agent.py
+
+import random
+
+class LLMAgent(BaseAgent):
+    def run(self, query, context=None):
+
+        modules = context.get("modules", [])
+
+        response = f"Reasoning over modules: {modules} → {query}"
+
+        # simulated drift risk
+        if random.random() < 0.15:
+            response += " [DRIFT / uncertain reasoning detected]"
+
+        return response
