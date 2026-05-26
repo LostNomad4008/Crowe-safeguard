@@ -1,0 +1,50 @@
+# orchestration/crowe_orchestrator.py
+
+from agent_framework.router_agent import RouterAgent
+from agent_framework.llm_agent import LLMAgent
+from agent_framework.guardian_agent import GuardianAgent
+from state.snapshot_store import SnapshotStore
+
+
+class CroweOrchestrator:
+
+    def __init__(self):
+        self.router = RouterAgent("router")
+        self.llm = LLMAgent("llm")
+        self.guardian = GuardianAgent("guardian")
+        self.snapshots = SnapshotStore()
+
+        self.state = {"last_good_response": None}
+
+    def run(self, query):
+
+        print("\n=== CROWE CYCLE START ===")
+        print("Query:", query)
+
+        # Step 1: route modules
+        modules = self.router.run(query)
+        context = {"modules": modules}
+
+        print("Modules Activated:", modules)
+
+        # Step 2: snapshot before reasoning
+        self.snapshots.save(self.state)
+
+        # Step 3: generate response
+        response = self.llm.run(query, context)
+        print("LLM:", response)
+
+        # Step 4: guardian validation
+        verdict = self.guardian.run(response)
+
+        print("Guardian:", verdict)
+
+        if verdict["status"] == "PASS":
+            self.state["last_good_response"] = response
+            return response
+
+        # Step 5: rollback
+        print("ROLLBACK TRIGGERED")
+        self.state = self.snapshots.restore()
+
+        return self.state["last_good_response"]
