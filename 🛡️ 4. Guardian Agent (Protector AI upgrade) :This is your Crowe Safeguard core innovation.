@@ -1,0 +1,22 @@
+# agent_framework/guardian_agent.py
+
+class GuardianAgent(BaseAgent):
+    def run(self, response, context=None):
+
+        # Simple integrity checks (expand later)
+        if "DRIFT" in response:
+            return {
+                "status": "FAIL",
+                "reason": "drift_detected"
+            }
+
+        if len(response) < 10:
+            return {
+                "status": "FAIL",
+                "reason": "too_short"
+            }
+
+        return {
+            "status": "PASS",
+            "reason": "stable"
+        }
